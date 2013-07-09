@@ -9,19 +9,9 @@ class Application
      */
     private $resources;
 
-    /**
-     * @var RequestSource
-     */
-    private $requestSource;
-
-    public function __construct(Config $config, Filter\FilterInterface $filter = null, RequestSource $requestSource = null)
+    public function __construct(Config $config, Filter\FilterInterface $filter = null)
     {
-        if (is_null($requestSource)) {
-            $requestSource = new RequestSource();
-        }
-        $this->requestSource = $requestSource;
-
-        $this->resources = new Resources($config, $requestSource, $filter);
+        $this->resources = new Resources($config, $filter);
     }
 
     /**
@@ -32,7 +22,7 @@ class Application
         $controller = new Controller($this->resources->request(), $this->resources->storage(), new Direction\Factory());
 
         try {
-            $response = $controller->{$this->requestSource->_SERVER['REQUEST_METHOD']}();
+            $response = $controller->{$_SERVER['REQUEST_METHOD']}();
             $this->invokeCache($response);
 
             return $response;
@@ -51,15 +41,23 @@ class Application
 
     private function invokeCache(Response $response)
     {
-        if('GET' == strtoupper($this->requestSource->_SERVER['REQUEST_METHOD'])) {
+        if('GET' == strtoupper($_SERVER['REQUEST_METHOD'])) {
             if ($response->hasConverted) {
                 $this->resources->cache()->save($response->body, $this->resources->request());
             } else {
                 $path = $this->resources->storage()->filePathById($this->resources->request()->id);
                 $this->resources->cache()->link($path ,$this->resources->request());
             }
-        } elseif('DELETE' == strtoupper($this->requestSource->_SERVER['REQUEST_METHOD'])) {
-            $this->resources->cache()->invalidate($this->resources->request());
+        } elseif('DELETE' == strtoupper($_SERVER['REQUEST_METHOD'])) {
+            $this->resources->cache()->invalidate($this->resources->request()->id);
         }
+    }
+
+    /**
+     * @return Resources
+     */
+    public function resources()
+    {
+        return $this->resources;
     }
 }

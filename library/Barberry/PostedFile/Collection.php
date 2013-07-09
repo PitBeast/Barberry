@@ -133,8 +133,8 @@ class Collection implements \ArrayAccess, \Iterator
         }
     }
 
-    protected function readTempFile($filepath, $trusted) {
-        if (is_uploaded_file($filepath) || $trusted === true) {
+    protected function readTempFile($filepath) {
+        if (is_uploaded_file($filepath)) {
             return file_get_contents($filepath);
         }
         return null;
@@ -147,9 +147,8 @@ class Collection implements \ArrayAccess, \Iterator
 
         $spec = $this->specsIterator[$key];
         if (is_array($spec)) {
-            $trusted = (array_key_exists('trusted', $spec) && $spec['trusted'] === true)?:false;
             $this->specsIterator[$key] = new \Barberry\PostedFile(
-                $this->readTempFile($spec['tmp_name'], $trusted),
+                $this->readTempFile($spec['tmp_name']),
                 $spec['name']
             );
         }
