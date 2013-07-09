@@ -50,7 +50,7 @@ class File implements StorageInterface {
     public function link($sourcePath) {
         $id = $this->generateUniqueId();
         $filePath = $this->filePathById($id);
-
+        @unlink($filePath);
         @link($sourcePath, $filePath);
 
         if(is_file($filePath)) {
