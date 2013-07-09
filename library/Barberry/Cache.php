@@ -14,6 +14,11 @@ class Cache {
         $this->assertFileWasWritten($this->filePath($request));
     }
 
+    public function link($path, Request $request) {
+        $this->linkToFilesystem($path, $this->filePath($request));
+        $this->assertFileWasWritten($this->filePath($request));
+    }
+
     public function invalidate(Request $request) {
         $dir = $this->path . $request->id;
         if(is_dir($dir)) {
@@ -29,6 +34,15 @@ class Cache {
         }
 
         file_put_contents($filePath, $content);
+        chmod($filePath, 0777);
+    }
+
+    protected function linkToFilesystem($path, $filePath) {
+        if(!is_dir(dirname($filePath))) {
+            mkdir(dirname($filePath), 0777, true);
+        }
+
+        link($path, $filePath);
         chmod($filePath, 0777);
     }
 

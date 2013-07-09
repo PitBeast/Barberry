@@ -52,7 +52,12 @@ class Application
     private function invokeCache(Response $response)
     {
         if('GET' == strtoupper($this->requestSource->_SERVER['REQUEST_METHOD'])) {
-            $this->resources->cache()->save($response->body, $this->resources->request());
+            if ($response->hasConverted) {
+                $this->resources->cache()->save($response->body, $this->resources->request());
+            } else {
+                $path = $this->resources->storage()->filePathById($this->resources->request()->id);
+                $this->resources->cache()->link($path ,$this->resources->request());
+            }
         } elseif('DELETE' == strtoupper($this->requestSource->_SERVER['REQUEST_METHOD'])) {
             $this->resources->cache()->invalidate($this->resources->request());
         }

@@ -78,13 +78,16 @@ class Controller implements Controller\ControllerInterface {
         }
 
         try {
+            $body = $this->directionFactory->direction(
+                ContentType::byString($bin),
+                $this->request->contentType,
+                $this->request->commandString
+            )->convert($bin);
             return self::response(
                 $this->request->contentType,
-                $this->directionFactory->direction(
-                    ContentType::byString($bin),
-                    $this->request->contentType,
-                    $this->request->commandString
-                )->convert($bin)
+                $body,
+                200,
+                !($bin === $body)
             );
         } catch (Plugin\NotAvailableException $e) {
             throw new Controller\NotFoundException;
@@ -114,8 +117,8 @@ class Controller implements Controller\ControllerInterface {
 
 //--------------------------------------------------------------------------------------------------
 
-    private static function response($contentType, $body, $code = 200) {
-        return new Response($contentType, $body, $code);
+    private static function response($contentType, $body, $code = 200, $hasConverted = true) {
+        return new Response($contentType, $body, $code, $hasConverted);
     }
 
 }

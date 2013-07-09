@@ -43,6 +43,23 @@ class File implements StorageInterface {
     }
 
     /**
+     * @param string $sourcePath
+     * @return string content id
+     * @throws WriteException
+     */
+    public function link($sourcePath) {
+        $id = $this->generateUniqueId();
+        $filePath = $this->filePathById($id);
+
+        @link($sourcePath, $filePath);
+
+        if(is_file($filePath)) {
+            return $id;
+        }
+        throw new WriteException($id);
+    }
+
+    /**
      * @param string $id
      * @throws NotFoundException
      */
@@ -57,6 +74,10 @@ class File implements StorageInterface {
         }
     }
 
+    public function filePathById($id) {
+        return $this->permanentStoragePath . $id;
+    }
+
 //--------------------------------------------------------------------------------------------------
 
     private function generateUniqueId() {
@@ -65,7 +86,4 @@ class File implements StorageInterface {
         return basename($tempFile);
     }
 
-    private function filePathById($id) {
-        return $this->permanentStoragePath . $id;
-    }
 }

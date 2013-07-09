@@ -9,6 +9,7 @@ class Response {
     public $contentType;
     public $body;
     public $code;
+    public $hasConverted;
 
     public static function notFound() {
         return new self(ContentType::json(), '{}', 404);
@@ -26,10 +27,11 @@ class Response {
         return new self(ContentType::json(), '{}', 500);
     }
 
-    public function __construct(ContentType $contentType, $body, $code = 200) {
+    public function __construct(ContentType $contentType, $body, $code = 200, $hasConverted = true) {
         $this->contentType = $contentType;
         $this->body = $body;
         $this->code = $code;
+        $this->hasConverted = $hasConverted;
     }
 
     public function send() {
