@@ -43,6 +43,7 @@ class Cache {
         }
 
         link($path, $filePath);
+        chmod($filePath, 0664);
     }
 
     private function assertFileWasWritten($filePath) {
