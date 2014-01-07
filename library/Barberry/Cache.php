@@ -62,6 +62,8 @@ class Cache {
             array_filter(
                 array(
                     $request->group,
+                    substr($request->id, 0, 3) . '/' .
+                    substr($request->id, -3) . '/' .
                     $request->id . '/' . $request->originalBasename
                 )
             )

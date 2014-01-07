@@ -104,7 +104,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase {
 
     public function testCanDetectOutputContentTypeByContentsOfStorage() {
         $this->assertEquals(
-            new Response(ContentType::txt(), '123'),
+            new Response(ContentType::txt(), '123', '200', false),
             self::c(
                 new Request('/11'),
                 m::mock('Barberry\\Storage\\StorageInterface', array('getById' => '123'))
