@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/PitBeast/Barberry.png?branch=master)](https://travis-ci.org/PitBeast/Barberry)
+
 # The problem
 
 Every web project have different binary data to host and handle: images, PDFs, etc. In most cases
