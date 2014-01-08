@@ -37,6 +37,37 @@ class CacheIntegrationTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals(file_get_contents($expectedPath), Test\Data::gif1x1());
     }
 
+    public function testIsSpecificCacheDirectoryInvalidated() {
+        $this->cache()->save(
+            Test\Data::gif1x1(),
+            new Request('/XyU98sd_1x1.gif')
+        );
+
+        $expectedPath = dirname($this->cache_path . '/XyU/8sd/XyU98sd/XyU98sd_1x1.gif');
+        $this->cache()->invalidate('XyU98sd');
+        $this->assertEquals(file_exists($expectedPath), false);
+    }
+
+    public function testIsAllLevelEmptyCacheDirectoryInvalidated() {
+        $this->cache()->save(
+            Test\Data::gif1x1(),
+            new Request('/XyU98sd_1x1.gif')
+        );
+
+        $this->cache()->save(
+            Test\Data::gif1x1(),
+            new Request('/XyU98se_1x1.gif')
+        );
+
+        $this->cache()->invalidate('XyU98sd');
+        $expectedPath = dirname($this->cache_path . '/XyU/8sd/XyU98sd/');
+        $this->assertEquals(file_exists($expectedPath), false);
+        $this->assertEquals(file_exists(dirname($expectedPath)), true);
+
+        $this->cache()->invalidate('XyU98se');
+        $this->assertEquals(file_exists(dirname($expectedPath)), false);
+    }
+
 //--------------------------------------------------------------------------------------------------
 
     private function cache() {

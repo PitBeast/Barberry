@@ -20,9 +20,15 @@ class Cache {
     }
 
     public function invalidate($id) {
-        $dir = $this->path . $id;
+        $dir = $this->path . substr($id, 0, 3) . '/' . substr($id, -3) . '/' . $id;
         if(is_dir($dir)) {
             self::rmDirRecursive($dir);
+        }
+        if (self::isDirectoryEmpty(dirname($dir)) === true) {
+            self::rmDirRecursive(dirname($dir));
+        }
+        if (self::isDirectoryEmpty(dirname(dirname($dir))) === true) {
+            self::rmDirRecursive(dirname(dirname($dir)));
         }
     }
 
@@ -81,4 +87,16 @@ class Cache {
         }
         return rmdir($dir);
     }
+
+    private static function isDirectoryEmpty($dir) {
+        if (!is_readable($dir)) return null;
+        $handle = opendir($dir);
+        while (false !== ($entry = readdir($handle))) {
+            if ($entry != "." && $entry != "..") {
+                return false;
+            }
+        }
+        return true;
+    }
+
 }
