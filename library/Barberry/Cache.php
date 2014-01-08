@@ -20,7 +20,7 @@ class Cache {
     }
 
     public function invalidate($id) {
-        $dir = $this->path . substr($id, 0, 3) . '/' . substr($id, -3) . '/' . $id;
+        $dir = $this->path . substr($id, 0, 2) . '/' . substr($id, 2, 2) . '/' . $id;
         if(is_dir($dir)) {
             self::rmDirRecursive($dir);
         }
@@ -68,8 +68,8 @@ class Cache {
             array_filter(
                 array(
                     $request->group,
-                    substr($request->id, 0, 3) . '/' .
-                    substr($request->id, -3) . '/' .
+                    substr($request->id, 0, 2) . '/' .
+                    substr($request->id, 2, 2) . '/' .
                     $request->id . '/' . $request->originalBasename
                 )
             )
